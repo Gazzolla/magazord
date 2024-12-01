@@ -1,4 +1,4 @@
-package com.example.task_1
+package com.magazord.task_1
 
 import io.flutter.embedding.android.FlutterActivity
 
