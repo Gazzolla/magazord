@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:task_1/modules/home/home_store.dart';
+import 'package:task_1/modules/task/task_screen.dart';
 import 'package:task_1/shared/models/task.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -21,7 +22,32 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         shape: CircleBorder(),
         backgroundColor: Color(0xff0e1f53),
-        onPressed: () {},
+        onPressed: () async {
+          var tasks = await showGeneralDialog(
+            context: context,
+            pageBuilder: (context, animation, secondaryAnimation) => SafeArea(child: TaskScreen()),
+            transitionBuilder: (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+
+              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+
+              return SlideTransition(
+                position: offsetAnimation,
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+          );
+
+          if (tasks != null) {
+            controller.addTask(tasks);
+          }
+        },
         child: Icon(
           Icons.add,
           color: Colors.white,
@@ -126,13 +152,9 @@ class HomeScreen extends StatelessWidget {
                           Expanded(
                             child: Align(
                               alignment: Alignment.bottomCenter,
-                              child: InkWell(
-                                splashColor: Colors.transparent,
-                                focusColor: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                onTap: () {},
-                                borderRadius: BorderRadius.circular(20),
+                              child: Tooltip(
+                                message: "Não desenvolvido!",
+                                triggerMode: TooltipTriggerMode.tap,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 10),
                                   child: Row(

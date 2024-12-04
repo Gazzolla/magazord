@@ -25,7 +25,7 @@ abstract class _TaskBase with Store {
   _TaskBase({
     required this.title,
     required this.description,
-    required this.completed,
+    this.completed = false,
     required this.category,
   }) : id = Uuid().v4();
 }

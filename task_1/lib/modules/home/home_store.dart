@@ -54,6 +54,10 @@ abstract class _HomeControllerBase with Store {
     _tasks.clear();
   }
 
+  addTask(value) {
+    _tasks.add(Task(title: value['title'], description: value['description'], category: value['category']));
+  }
+
   @computed
   List<Task> get tasks => _tasks.where((x) => x.title.toLowerCase().contains(searchText.toLowerCase()) || x.category.toLowerCase().contains(searchText.toLowerCase())).toList();
 
