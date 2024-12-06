@@ -32,30 +32,14 @@ abstract class _HomeControllerBase with Store {
   @action
   setRemainingSpaceValue(double value) => remainingSpace = value;
 
-  final ObservableList<Task> _tasks = [
-    Task(title: 'Comprar mantimentos', description: 'Ir ao mercado e comprar frutas, vegetais e pão', completed: false, category: 'Casa'),
-    Task(title: 'Estudar Dart', description: 'Estudar testes unitários', completed: true, category: 'Trabalho'),
-    Task(title: 'Limpar a casa', description: 'Fazer uma faxina geral na sala e nos quartos', completed: false, category: 'Casa'),
-    Task(title: 'Planejar viagem', description: 'Organizar roteiro para viagem ao litoral', completed: true, category: 'Lazer'),
-    Task(title: 'Assistir palestra', description: 'Participar do webinar sobre produtividade', completed: false, category: 'Trabalho'),
-    Task(title: 'Revisar projeto', description: 'Revisar o código do projeto antes de entregar', completed: true, category: 'Trabalho'),
-    Task(title: 'Marcar consulta', description: 'Agendar consulta com o dentista para a próxima semana', completed: false, category: 'Saúde'),
-    Task(title: 'Ler livro', description: 'Terminar de ler o livro "O Poder do Hábito"', completed: true, category: 'Lazer'),
-    Task(title: 'Preparar apresentação', description: 'Criar slides para a reunião de segunda-feira', completed: false, category: 'Trabalho'),
-    Task(title: 'Correr no parque', description: 'Fazer 5 km de corrida pela manhã', completed: true, category: 'Saúde'),
-    Task(title: 'Organizar fotos', description: 'Separar as fotos da viagem para o álbum', completed: false, category: 'Casa'),
-    Task(title: 'Resolver pendências bancárias', description: 'Ir ao banco para atualizar dados', completed: true, category: 'Financeiro'),
-    Task(title: 'Comprar presente', description: 'Escolher um presente para o aniversário da Ana', completed: false, category: 'Pessoal'),
-    Task(title: 'Trocar óleo do carro', description: 'Levar o carro na oficina para manutenção', completed: true, category: 'Carro'),
-    Task(title: 'Aprender a cozinhar', description: 'Testar uma receita nova de bolo de chocolate', completed: false, category: 'Casa'),
-  ].asObservable();
+  final ObservableList<Task> _tasks = <Task>[].asObservable();
 
   clearTasks() {
     _tasks.clear();
   }
 
-  addTask(value) {
-    _tasks.add(Task(title: value['title'], description: value['description'], category: value['category']));
+  addTask(Map value) {
+    _tasks.add(Task(title: value['title'], description: value['description'] ?? '', category: value['category'], completed: value['completed'] ?? false));
   }
 
   @computed

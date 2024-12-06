@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_1/modules/home/home_store.dart';
 import 'package:task_1/modules/task/task_screen.dart';
 import 'package:task_1/shared/models/task.dart';
@@ -14,6 +17,15 @@ class HomeScreen extends StatelessWidget {
     GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     GlobalKey remainingSpaceKey = GlobalKey();
     HomeController controller = HomeController();
+
+    SharedPreferences.getInstance().then((prefs) {
+      if (prefs.containsKey('tasks')) {
+        List<Map> tasks = List<Map>.from(json.decode(prefs.getString('tasks')!));
+        for (Map task in tasks) {
+          controller.addTask(task);
+        }
+      }
+    });
 
     return Scaffold(
       backgroundColor: Color(0xfff4f4f4),
@@ -45,7 +57,10 @@ class HomeScreen extends StatelessWidget {
           );
 
           if (tasks != null) {
+            tasks as Map<String, dynamic>;
             controller.addTask(tasks);
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setString("tasks", json.encode(controller.tasks.map((e) => e.toMap()).toList()));
           }
         },
         child: Icon(
@@ -96,14 +111,7 @@ class HomeScreen extends StatelessWidget {
                                   onTap: () {
                                     scaffoldKey.currentState?.closeDrawer();
                                   },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        width: 2,
-                                        color: Color(0xff424d82),
-                                      ),
-                                    ),
+                                  child: Padding(
                                     padding: EdgeInsets.all(15),
                                     child: Icon(
                                       FontAwesomeIcons.chevronLeft,
@@ -126,8 +134,9 @@ class HomeScreen extends StatelessWidget {
                             focusColor: Colors.transparent,
                             hoverColor: Colors.transparent,
                             highlightColor: Colors.transparent,
-                            onTap: () {
+                            onTap: () async {
                               controller.clearTasks();
+                              (await SharedPreferences.getInstance()).clear();
                               scaffoldKey.currentState?.closeDrawer();
                             },
                             borderRadius: BorderRadius.circular(20),
@@ -322,6 +331,7 @@ class HomeScreen extends StatelessWidget {
                               SizedBox(
                                 height: 130,
                                 child: Observer(builder: (_) {
+                                  if (controller.completionResume.isEmpty) return Center(child: Text("Não há nenhuma categoria para ser exibida!"));
                                   return ListView(
                                     scrollDirection: Axis.horizontal,
                                     children: [
@@ -381,6 +391,8 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   Observer(builder: (_) {
+                    if (controller.tasks.isEmpty) return Center(child: Text("Não há nenhuma atividade para ser exibida!"));
+
                     return SizedBox(
                       height: controller.remainingSpace <= 0 ? constraints.maxHeight * 0.7 : controller.remainingSpace,
                       child: SingleChildScrollView(
@@ -439,8 +451,11 @@ class HomeScreen extends StatelessWidget {
                                         children: [
                                           Checkbox(
                                             value: controller.tasks[i].completed,
-                                            onChanged: (value) {
+                                            onChanged: (value) async {
                                               controller.tasks[i].completed = value!;
+                                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                                              prefs.setString("tasks", json.encode(controller.tasks.map((e) => e.toMap()).toList()));
+                                              print("aa");
                                             },
                                             activeColor: CategoryIndicators.getColorForCategory(controller.tasks[i].category),
                                             shape: CircleBorder(),

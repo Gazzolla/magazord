@@ -1,5 +1,6 @@
 import 'package:mobx/mobx.dart';
 import 'package:rive/rive.dart';
+import 'package:task_2/shared/constants.dart';
 import 'package:task_2/shared/models/day.dart';
 part 'home_store.g.dart';
 
@@ -9,13 +10,19 @@ abstract class _HomeControllerBase with Store {
   WeekDay curentDay = WeekDay(day: DateTime.now(), sunlight: DateTime.now());
 
   @observable
-  Artboard? riveArtboard;
+  Artboard? backgroudArtboard;
+
+  @observable
+  Artboard? switchArtboard;
 
   @observable
   bool raining = false;
 
   @observable
-  SMITrigger? isDayTime;
+  SMITrigger? dayLightTrigger;
+
+  @observable
+  SMIBool? themeSwitchTrigger;
 
   @observable
   String city = '';
@@ -32,6 +39,9 @@ abstract class _HomeControllerBase with Store {
   @observable
   ObservableList<WeekDay> forecast = <WeekDay>[].asObservable();
 
+  @observable
+  bool disableDaylightButton = false;
+
   @action
   setForecast(List<WeekDay> value) => forecast = value.asObservable();
 
@@ -39,7 +49,21 @@ abstract class _HomeControllerBase with Store {
   setRain(bool value) => raining = value;
 
   @action
-  setIsDayTime(SMITrigger value) => isDayTime = value;
+  setDayLightTrigger(SMITrigger value) => dayLightTrigger = value;
+
+  @action
+  setThemeSwitchTrigger(SMIBool value) => themeSwitchTrigger = value;
+
+  @action
+  toggleDaylight() async {
+    disableDaylightButton = true;
+    themeService.toggleTheme();
+    dayLightTrigger?.fire();
+    themeSwitchTrigger?.value = themeService.isDarkTheme;
+
+    await Future.delayed(Duration(seconds: 1));
+    disableDaylightButton = false;
+  }
 
   @action
   setCity(String value) => city = value;

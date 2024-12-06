@@ -4,7 +4,26 @@ import 'package:uuid/uuid.dart';
 
 part 'task.g.dart';
 
-class Task = _TaskBase with _$Task;
+class Task extends _TaskBase with _$Task {
+  Task({required super.title, required super.description, required super.category, required super.completed});
+
+  factory Task.fromJson(Map<String, dynamic> data) {
+    return Task(
+      title: data['title'],
+      description: data['description'],
+      category: data['category'],
+      completed: data['completed'],
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+        "category": category,
+        "completed": completed,
+        "description": description,
+        "id": id,
+        "title": title,
+      };
+}
 
 abstract class _TaskBase with Store {
   @observable
@@ -25,7 +44,7 @@ abstract class _TaskBase with Store {
   _TaskBase({
     required this.title,
     required this.description,
-    this.completed = false,
+    required this.completed,
     required this.category,
   }) : id = Uuid().v4();
 }

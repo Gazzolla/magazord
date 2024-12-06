@@ -66,7 +66,6 @@ abstract class _WeekDayBase with Store {
   @action
   setWindSpeed(double value) => windSpeed = value;
 
-  @observable
   String get windSpeedCategory {
     if (windSpeed >= 0 && windSpeed <= 19) {
       return "Calmo";
@@ -85,7 +84,6 @@ abstract class _WeekDayBase with Store {
     }
   }
 
-  @observable
   String get rainRiskCategory {
     if (chanceOfRain >= 0 && chanceOfRain <= 20) {
       return "Pouca Chance";
@@ -102,7 +100,6 @@ abstract class _WeekDayBase with Store {
     }
   }
 
-  @observable
   String get uvRiskCategory {
     if (uvIndex >= 0 && uvIndex <= 2) {
       return "Baixo";

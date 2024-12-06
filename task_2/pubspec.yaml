@@ -36,3 +36,4 @@ flutter:
     - assets/images/magazord_logo.png
     - assets/animations/day_to_night_switch.riv
     - assets/animations/rain.riv
+    - assets/animations/day_and_night_switch_button.riv
